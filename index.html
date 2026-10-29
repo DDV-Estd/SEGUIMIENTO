@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matriz de Seguimiento - DDV</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue-primary: #094780;
+      --red-accent: #9A1A1A;
+      --bg-light: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border-color: #E2E8F0;
+      --text-dark: #1E293B;
+      --text-muted: #64748B;
+
+      --green-bg: #ECFDF5;
+      --green-border: #10B981;
+      --green-text: #065F46;
+
+      --yellow-bg: #FFFBEB;
+      --yellow-border: #F59E0B;
+      --yellow-text: #92400E;
+
+      --red-bg: #FEF2F2;
+      --red-border: #EF4444;
+      --red-text: #991B1B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg-light); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+
+    header {
+      background: linear-gradient(90deg, #094780 0%, #06325c 55%, #9A1A1A 100%);
+      color: #FFFFFF;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 4px 15px rgba(9, 71, 128, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header-title p { font-size: 0.82rem; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px; }
+
+    .container { max-width: 1350px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+
+    .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 700; color: var(--blue-primary); }
+    .breadcrumb span.separator { color: var(--text-muted); font-weight: 400; }
+
+    .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+    .btn {
+      padding: 0.5rem 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: none;
+    }
+
+    .btn-back { background: #FFF; color: var(--red-accent); border: 1.5px solid var(--red-accent); }
+    .btn-back:hover { background: var(--red-accent); color: #FFF; }
+
+    .btn-create { background: #059669; color: #FFF; }
+    .btn-create:hover { background: #047857; }
+
+    .btn-sync { background: var(--blue-primary); color: #FFF; }
+    .btn-sync:hover { background: #06325c; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--blue-primary);
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(9, 71, 128, 0.12); border-color: var(--blue-primary); }
+    .card:hover::before { background: var(--red-accent); }
+
+    .card-title { font-size: 1.15rem; font-weight: 700; color: var(--blue-primary); margin-bottom: 0.5rem; }
+    .card-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; font-weight: 600; border-top: 1px solid var(--border-color); padding-top: 0.75rem; }
+    .badge-count { background: #EBF3FA; color: var(--blue-primary); padding: 0.25rem 0.65rem; border-radius: 20px; font-weight: 700; }
+
+    .table-header-box {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-input {
+      padding: 0.5rem 1rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      width: 280px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--blue-primary); }
+
+    /* Acordeones */
+    .status-group-container { display: flex; flex-direction: column; gap: 1.25rem; }
+    .accordion-card { background: var(--card-bg); border-radius: 10px; border: 1.5px solid var(--border-color); overflow: hidden; }
+    .accordion-header { padding: 1.25rem 1.75rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; font-weight: 700; }
+    .accordion-header .title-area { display: flex; align-items: center; gap: 1rem; }
+    .accordion-header .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .accordion-header .chevron { font-size: 1.1rem; transition: transform 0.3s ease; color: var(--text-muted); }
+    .accordion-header.active .chevron { transform: rotate(180deg); }
+
+    .opt-finalizadas { border-color: var(--green-border); }
+    .opt-finalizadas .accordion-header { background-color: var(--green-bg); color: var(--green-text); }
+    .opt-finalizadas .dot { background-color: var(--green-border); }
+    .opt-finalizadas .status-pill { background-color: #A7F3D0; color: var(--green-text); }
+
+    .opt-tramite { border-color: var(--yellow-border); }
+    .opt-tramite .accordion-header { background-color: var(--yellow-bg); color: var(--yellow-text); }
+    .opt-tramite .dot { background-color: var(--yellow-border); }
+    .opt-tramite .status-pill { background-color: #FDE68A; color: var(--yellow-text); }
+
+    .opt-vencidas { border-color: var(--red-border); }
+    .opt-vencidas .accordion-header { background-color: var(--red-bg); color: var(--red-text); }
+    .opt-vencidas .dot { background-color: var(--red-border); }
+    .opt-vencidas .status-pill { background-color: #FECACA; color: var(--red-text); }
+
+    .status-pill { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.82rem; font-weight: 800; }
+    .accordion-body { display: none; padding: 1.25rem; border-top: 1px solid var(--border-color); background-color: #FFFFFF; }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    thead th { background-color: var(--blue-primary); color: #FFF; font-weight: 700; padding: 0.85rem 1rem; text-transform: uppercase; font-size: 0.75rem; }
+    tbody td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    tbody tr:hover { background-color: #F8FAFC; }
+
+    .edit-select, .edit-date {
+      padding: 0.35rem 0.6rem; border: 1.5px solid #CBD5E1; border-radius: 6px; font-weight: 600; font-size: 0.82rem; outline: none; background: #FFF;
+    }
+    .edit-select:focus, .edit-date:focus { border-color: var(--blue-primary); }
+
+    .btn-edit-row {
+      background: #F1F5F9; border: 1px solid #CBD5E1; color: var(--text-dark); border-radius: 4px; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.78rem; font-weight: 700;
+    }
+    .btn-edit-row:hover { background: #E2E8F0; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 9999;
+    }
+    .modal-box {
+      background: #FFF; border-radius: 12px; width: 90%; max-width: 550px; padding: 1.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; }
+    .modal-header h3 { color: var(--blue-primary); font-size: 1.15rem; font-weight: 800; }
+    .close-btn { font-size: 1.3rem; cursor: pointer; color: var(--text-muted); background: none; border: none; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.35rem; }
+    .form-control { width: 100%; padding: 0.55rem 0.75rem; border: 1.5px solid #CBD5E1; border-radius: 6px; font-size: 0.9rem; outline: none; }
+    .form-control:focus { border-color: var(--blue-primary); }
+    textarea.form-control { resize: vertical; min-height: 75px; }
+
+    .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
+
+    .loading-overlay {
+      display: none; position: fixed; top: 20px; right: 20px; background: #094780; color: #FFF; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">
+      <h1>MATRIZ DE SEGUIMIENTO</h1>
+      <p>DIRECCIÓN DE DERECHO DE VÍA (DDV) • EN LÍNEA</p>
+    </div>
+    <div id="statusTag" style="font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.15); padding: 0.3rem 0.8rem; border-radius: 20px;">
+      Conectado a Google Drive
+    </div>
+  </header>
+
+  <div class="loading-overlay" id="loadingNotice">Sincronizando con Drive...</div>
+
+  <div class="container">
+    <div class="nav-bar">
+      <div class="breadcrumb" id="breadcrumbArea">
+        <span>Inicio</span>
+      </div>
+      <div class="nav-actions">
+        <button class="btn btn-sync" onclick="loadDataFromSheets()">Sincronizar</button>
+        <button class="btn btn-create" id="btnNewTask" onclick="openCreateModal()" style="display: none;">+ Nueva Actividad</button>
+        <button class="btn btn-back" id="backBtn" onclick="goBack()" style="display: none;">&#8592; Volver</button>
+      </div>
+    </div>
+
+    <!-- 1. Jefaturas -->
+    <div id="viewJefaturas" class="grid"></div>
+
+    <!-- 2. Administradores -->
+    <div id="viewAdministradores" style="display: none;">
+      <div class="table-header-box" style="margin-bottom: 1.25rem; background:#fff; border-radius:8px; border:1px solid var(--border-color);">
+        <div>
+          <h2 id="jefaturaSelectedTitle" style="color: var(--blue-primary); font-size:1.2rem;">Administradores</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Selecciona un administrador para consultar o registrar actividades</p>
+        </div>
+        <input type="text" id="searchAdmin" class="search-input" placeholder="Buscar administrador..." oninput="filterAdministradores()">
+      </div>
+      <div class="grid" id="adminGrid"></div>
+    </div>
+
+    <!-- 3. Categorías -->
+    <div id="viewCategorias" style="display: none;">
+      <div class="table-header-box" style="margin-bottom: 1.5rem; background:#fff; border-radius:8px; border:1px solid var(--border-color);">
+        <div>
+          <h2 id="adminSelectedTitle" style="color: var(--blue-primary); font-size:1.2rem;">Panel de Actividades</h2>
+          <p id="totalAdminSummary" style="color: var(--text-muted); font-size: 0.85rem;"></p>
+        </div>
+      </div>
+
+      <div class="status-group-container">
+        <!-- Finalizadas -->
+        <div class="accordion-card opt-finalizadas">
+          <div class="accordion-header" id="headerFinalizadas" onclick="toggleAccordion('bodyFinalizadas', this)">
+            <div class="title-area"><div class="dot"></div><span>Actividades Finalizadas</span></div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <span class="status-pill" id="countFinalizadas">0 actividades</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="accordion-body" id="bodyFinalizadas">
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 24%;">ACTIVIDADES</th>
+                    <th style="width: 9%;">ENCARGADO</th>
+                    <th style="width: 13%;">FECHA PLAZO</th>
+                    <th style="width: 13%;">ESTADO</th>
+                    <th style="width: 9%;">RESPONSABLE</th>
+                    <th style="width: 24%;">COMENTARIO</th>
+                    <th style="width: 8%;">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody id="tableFinalizadas"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- En Trámite -->
+        <div class="accordion-card opt-tramite">
+          <div class="accordion-header" id="headerTramite" onclick="toggleAccordion('bodyTramite', this)">
+            <div class="title-area"><div class="dot"></div><span>Actividades en Trámite</span></div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <span class="status-pill" id="countTramite">0 actividades</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="accordion-body" id="bodyTramite">
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 24%;">ACTIVIDADES</th>
+                    <th style="width: 9%;">ENCARGADO</th>
+                    <th style="width: 13%;">FECHA PLAZO</th>
+                    <th style="width: 13%;">ESTADO</th>
+                    <th style="width: 9%;">RESPONSABLE</th>
+                    <th style="width: 24%;">COMENTARIO</th>
+                    <th style="width: 8%;">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody id="tableTramite"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vencidas -->
+        <div class="accordion-card opt-vencidas">
+          <div class="accordion-header" id="headerVencidas" onclick="toggleAccordion('bodyVencidas', this)">
+            <div class="title-area"><div class="dot"></div><span>Actividades Vencidas</span></div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <span class="status-pill" id="countVencidas">0 actividades</span>
+              <span class="chevron">&#9660;</span>
+            </div>
+          </div>
+          <div class="accordion-body" id="bodyVencidas">
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 24%;">ACTIVIDADES</th>
+                    <th style="width: 9%;">ENCARGADO</th>
+                    <th style="width: 13%;">FECHA PLAZO</th>
+                    <th style="width: 13%;">ESTADO</th>
+                    <th style="width: 9%;">RESPONSABLE</th>
+                    <th style="width: 24%;">COMENTARIO</th>
+                    <th style="width: 8%;">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody id="tableVencidas"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Crear / Editar -->
+  <div class="modal-backdrop" id="taskModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">Nueva Actividad</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="taskForm" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="formTaskId">
+        <div class="form-group">
+          <label>Actividad / Proyecto *</label>
+          <input type="text" id="formActividad" class="form-control" required placeholder="Ej: Definición y saneamiento predial...">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Encargado</label>
+            <input type="text" id="formEncargado" class="form-control" placeholder="Ej: PVN / CVS">
+          </div>
+          <div class="form-group">
+            <label>Responsable (Siglas)</label>
+            <input type="text" id="formResponsable" class="form-control" placeholder="Ej: AC/JT/RZ">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Fecha de Plazo</label>
+            <input type="date" id="formFecha" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select id="formEstado" class="form-control">
+              <option value="PENDIENTE">PENDIENTE</option>
+              <option value="EN TRAMITE">EN TRÁMITE</option>
+              <option value="FINALIZADO">FINALIZADO</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Comentario / Observación</label>
+          <textarea id="formComentario" class="form-control" placeholder="Detalle de avances..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-back" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-create" id="btnSaveModal">Guardar en Drive</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzb6Z3664Hc_mM10b8Jr_kbOrKRjLyCNyMEXzS3ekaRwDYMFxlk9VEnJTIIzYzAumYQgA/exec";
+    let RAW_DATA = [];
+
+    let selectedJefatura = null;
+    let selectedAdmin = null;
+
+    function showLoading(msg = "Sincronizando con Drive...") {
+      const el = document.getElementById("loadingNotice");
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    function hideLoading() {
+      document.getElementById("loadingNotice").style.display = "none";
+    }
+
+    async function loadDataFromSheets() {
+      showLoading("Cargando matriz desde Drive...");
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        
+        RAW_DATA = data.map(d => {
+          let st = (d["ESTADO"] || "PENDIENTE").toUpperCase().trim();
+          if (st.includes("FINALIZ") || st.includes("CONCLU")) st = "FINALIZADO";
+          else if (st.includes("TRAMITE") || st.includes("PROCESO")) st = "EN TRAMITE";
+          else st = "PENDIENTE";
+
+          return {
+            id: d["ID"] || ("ACT-" + Math.random().toString(36).substr(2, 9)),
+            jefatura: (d["JEFATURAS"] || "").trim(),
+            administrador: (d["ADMINISTRADORES"] || "").trim(),
+            actividad: (d["ACTIVIDADES"] || "").trim(),
+            encargado: (d["ENCARGADO"] || "").trim(),
+            fecha_plazo: (d["FECHA DE PLAZO"] || "").trim(),
+            estado: st,
+            responsable: (d["RESPONSABLE"] || "").trim(),
+            comentario: (d["COMENTARIO"] || "").trim()
+          };
+        });
+
+        if (selectedAdmin) renderCategorias();
+        else if (selectedJefatura) renderAdministradores();
+        else renderJefaturas();
+
+      } catch (err) {
+        alert("Error al conectar con Google Sheets. Verifica la conexión.");
+        console.error(err);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function renderJefaturas() {
+      const jefaturas = [...new Set(RAW_DATA.map(d => d.jefatura).filter(Boolean))].sort();
+      const container = document.getElementById("viewJefaturas");
+      container.innerHTML = "";
+
+      jefaturas.forEach(jef => {
+        const adminCount = new Set(RAW_DATA.filter(d => d.jefatura === jef).map(d => d.administrador).filter(Boolean)).size;
+        const taskCount = RAW_DATA.filter(d => d.jefatura === jef && d.actividad !== "").length;
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => selectJefatura(jef);
+        card.innerHTML = `
+          <div class="card-title">${jef}</div>
+          <div class="card-subtitle">Dirección de Derecho de Vía</div>
+          <div class="card-meta">
+            <span>${adminCount} Administradores</span>
+            <span class="badge-count">${taskCount} Tareas</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById("viewJefaturas").style.display = "grid";
+      document.getElementById("viewAdministradores").style.display = "none";
+      document.getElementById("viewCategorias").style.display = "none";
+      document.getElementById("backBtn").style.display = "none";
+      document.getElementById("btnNewTask").style.display = "none";
+      document.getElementById("breadcrumbArea").innerHTML = `<span>Inicio</span>`;
+    }
+
+    function selectJefatura(jef) {
+      selectedJefatura = jef;
+      document.getElementById("jefaturaSelectedTitle").innerText = jef;
+      renderAdministradores();
+    }
+
+    function renderAdministradores() {
+      const dataJef = RAW_DATA.filter(d => d.jefatura === selectedJefatura);
+      const admins = [...new Set(dataJef.map(d => d.administrador).filter(Boolean))].sort();
+
+      const container = document.getElementById("adminGrid");
+      container.innerHTML = "";
+
+      admins.forEach(adm => {
+        const acts = dataJef.filter(d => d.administrador === adm && d.actividad !== "");
+        const card = document.createElement("div");
+        card.className = "card admin-card";
+        card.setAttribute("data-name", adm.toLowerCase());
+        card.onclick = () => selectAdmin(adm);
+        card.innerHTML = `
+          <div class="card-title" style="font-size:1.05rem;">${adm}</div>
+          <div class="card-subtitle">${selectedJefatura}</div>
+          <div class="card-meta">
+            <span>Actividades</span>
+            <span class="badge-count">${acts.length}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById("viewJefaturas").style.display = "none";
+      document.getElementById("viewAdministradores").style.display = "block";
+      document.getElementById("viewCategorias").style.display = "none";
+      document.getElementById("backBtn").style.display = "inline-flex";
+      document.getElementById("btnNewTask").style.display = "none";
+      document.getElementById("breadcrumbArea").innerHTML = `
+        <span style="cursor:pointer;" onclick="goHome()">Inicio</span>
+        <span class="separator">/</span>
+        <span>${selectedJefatura}</span>
+      `;
+      document.getElementById("searchAdmin").value = "";
+    }
+
+    function filterAdministradores() {
+      const q = document.getElementById("searchAdmin").value.toLowerCase();
+      document.querySelectorAll(".admin-card").forEach(el => {
+        const name = el.getAttribute("data-name");
+        el.style.display = name.includes(q) ? "" : "none";
+      });
+    }
+
+    function selectAdmin(adm) {
+      selectedAdmin = adm;
+      document.getElementById("adminSelectedTitle").innerText = adm;
+      renderCategorias();
+    }
+
+    function renderCategorias(autoOpenCategory = null) {
+      const records = RAW_DATA.filter(d => 
+        d.jefatura === selectedJefatura && 
+        d.administrador === selectedAdmin &&
+        d.actividad !== ""
+      );
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const finalizadas = [];
+      const enTramite = [];
+      const vencidas = [];
+
+      records.forEach(r => {
+        if (r.estado === "FINALIZADO") {
+          finalizadas.push(r);
+        } else {
+          if (r.fecha_plazo) {
+            const fPlazo = new Date(r.fecha_plazo + "T00:00:00");
+            if (fPlazo < today) vencidas.push(r);
+            else enTramite.push(r);
+          } else {
+            enTramite.push(r);
+          }
+        }
+      });
+
+      document.getElementById("countFinalizadas").innerText = `${finalizadas.length} actividad(es)`;
+      document.getElementById("countTramite").innerText = `${enTramite.length} actividad(es)`;
+      document.getElementById("countVencidas").innerText = `${vencidas.length} actividad(es)`;
+      document.getElementById("totalAdminSummary").innerText = `${records.length} actividad(es) registradas`;
+
+      populateCategoryTable("tableFinalizadas", finalizadas);
+      populateCategoryTable("tableTramite", enTramite);
+      populateCategoryTable("tableVencidas", vencidas);
+
+      if (autoOpenCategory) {
+        const body = document.getElementById(autoOpenCategory);
+        const headerId = autoOpenCategory.replace("body", "header");
+        const header = document.getElementById(headerId);
+        if (body) body.style.display = "block";
+        if (header) header.classList.add("active");
+      }
+
+      document.getElementById("viewJefaturas").style.display = "none";
+      document.getElementById("viewAdministradores").style.display = "none";
+      document.getElementById("viewCategorias").style.display = "block";
+      document.getElementById("backBtn").style.display = "inline-flex";
+      document.getElementById("btnNewTask").style.display = "inline-flex";
+      document.getElementById("breadcrumbArea").innerHTML = `
+        <span style="cursor:pointer;" onclick="goHome()">Inicio</span>
+        <span class="separator">/</span>
+        <span style="cursor:pointer;" onclick="renderAdministradores()">${selectedJefatura}</span>
+        <span class="separator">/</span>
+        <span>${selectedAdmin}</span>
+      `;
+    }
+
+    function populateCategoryTable(tbodyId, dataList) {
+      const tbody = document.getElementById(tbodyId);
+      tbody.innerHTML = "";
+
+      if (dataList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:#64748B;">No hay actividades en esta categoría.</td></tr>`;
+        return;
+      }
+
+      dataList.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${r.actividad}</strong></td>
+          <td>${r.encargado || "-"}</td>
+          <td>
+            <input type="date" class="edit-date" value="${r.fecha_plazo}" onchange="quickUpdate('${r.id}', 'fecha_plazo', this.value, '${tbodyId}')">
+          </td>
+          <td>
+            <select class="edit-select" onchange="quickUpdate('${r.id}', 'estado', this.value, '${tbodyId}')">
+              <option value="FINALIZADO" ${r.estado === "FINALIZADO" ? "selected" : ""}>FINALIZADO</option>
+              <option value="EN TRAMITE" ${r.estado === "EN TRAMITE" ? "selected" : ""}>EN TRÁMITE</option>
+              <option value="PENDIENTE" ${r.estado === "PENDIENTE" ? "selected" : ""}>PENDIENTE</option>
+            </select>
+          </td>
+          <td>${r.responsable || "-"}</td>
+          <td>${r.comentario || "-"}</td>
+          <td>
+            <button class="btn-edit-row" onclick="openEditModal('${r.id}')">Editar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function quickUpdate(id, field, value, tbodyId) {
+      const item = RAW_DATA.find(d => d.id === id);
+      if (!item) return;
+
+      item[field] = value;
+      const currentBodyId = tbodyId.replace("table", "body");
+      renderCategorias(currentBodyId);
+
+      showLoading("Actualizando en Google Drive...");
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "update",
+            data: { id: id, [field]: value }
+          })
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function openCreateModal() {
+      document.getElementById("modalTitle").innerText = "Nueva Actividad - " + selectedAdmin;
+      document.getElementById("formTaskId").value = "";
+      document.getElementById("formActividad").value = "";
+      document.getElementById("formEncargado").value = "";
+      document.getElementById("formResponsable").value = "";
+      document.getElementById("formFecha").value = "";
+      document.getElementById("formEstado").value = "PENDIENTE";
+      document.getElementById("formComentario").value = "";
+      document.getElementById("taskModal").style.display = "flex";
+    }
+
+    function openEditModal(id) {
+      const item = RAW_DATA.find(d => d.id === id);
+      if (!item) return;
+
+      document.getElementById("modalTitle").innerText = "Editar Actividad";
+      document.getElementById("formTaskId").value = item.id;
+      document.getElementById("formActividad").value = item.actividad;
+      document.getElementById("formEncargado").value = item.encargado;
+      document.getElementById("formResponsable").value = item.responsable;
+      document.getElementById("formFecha").value = item.fecha_plazo;
+      document.getElementById("formEstado").value = item.estado;
+      document.getElementById("formComentario").value = item.comentario;
+      document.getElementById("taskModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("taskModal").style.display = "none";
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById("formTaskId").value;
+      const payload = {
+        actividad: document.getElementById("formActividad").value,
+        encargado: document.getElementById("formEncargado").value,
+        responsable: document.getElementById("formResponsable").value,
+        fecha_plazo: document.getElementById("formFecha").value,
+        estado: document.getElementById("formEstado").value,
+        comentario: document.getElementById("formComentario").value,
+        jefatura: selectedJefatura,
+        administrador: selectedAdmin
+      };
+
+      closeModal();
+      showLoading("Guardando cambios en Drive...");
+
+      try {
+        if (id) {
+          payload.id = id;
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "update", data: payload })
+          });
+          const item = RAW_DATA.find(d => d.id === id);
+          if (item) Object.assign(item, payload);
+        } else {
+          const res = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "create", data: payload })
+          });
+          const resData = await res.json();
+          payload.id = resData.id;
+          RAW_DATA.push(payload);
+        }
+        renderCategorias();
+      } catch (err) {
+        alert("Error al guardar en Drive.");
+        console.error(err);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function toggleAccordion(bodyId, headerEl) {
+      const body = document.getElementById(bodyId);
+      const isOpen = body.style.display === "block";
+      if (isOpen) {
+        body.style.display = "none";
+        headerEl.classList.remove("active");
+      } else {
+        body.style.display = "block";
+        headerEl.classList.add("active");
+      }
+    }
+
+    function goHome() {
+      selectedJefatura = null;
+      selectedAdmin = null;
+      renderJefaturas();
+    }
+
+    function goBack() {
+      if (selectedAdmin) {
+        selectedAdmin = null;
+        renderAdministradores();
+      } else if (selectedJefatura) {
+        goHome();
+      }
+    }
+
+    window.onload = loadDataFromSheets;
+  </script>
+</body>
+</html>
