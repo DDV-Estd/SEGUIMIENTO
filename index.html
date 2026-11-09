@@ -46,7 +46,7 @@
     .header-title h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
     .header-title p { font-size: 0.82rem; opacity: 0.9; font-weight: 600; letter-spacing: 0.5px; }
 
-    .container { max-width: 1350px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+    .container { max-width: 1420px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
 
     .nav-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
     .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 700; color: var(--blue-primary); }
@@ -147,12 +147,12 @@
     .accordion-body { display: none; padding: 1.25rem; border-top: 1px solid var(--border-color); background-color: #FFFFFF; }
 
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
-    thead th { background-color: var(--blue-primary); color: #FFF; font-weight: 700; padding: 0.85rem 1rem; text-transform: uppercase; font-size: 0.75rem; }
-    tbody td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    thead th { background-color: var(--blue-primary); color: #FFF; font-weight: 700; padding: 0.85rem 0.9rem; text-transform: uppercase; font-size: 0.74rem; }
+    tbody td { padding: 0.85rem 0.9rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
     tbody tr:hover { background-color: #F8FAFC; }
 
     .edit-select, .edit-date {
-      padding: 0.35rem 0.6rem; border: 1.5px solid #CBD5E1; border-radius: 6px; font-weight: 600; font-size: 0.82rem; outline: none; background: #FFF;
+      padding: 0.35rem 0.5rem; border: 1.5px solid #CBD5E1; border-radius: 6px; font-weight: 600; font-size: 0.8rem; outline: none; background: #FFF;
     }
     .edit-select:focus, .edit-date:focus { border-color: var(--blue-primary); }
 
@@ -166,17 +166,47 @@
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 9999;
     }
     .modal-box {
-      background: #FFF; border-radius: 12px; width: 90%; max-width: 550px; padding: 1.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;
+      background: #FFF; border-radius: 12px; width: 90%; max-width: 620px; padding: 1.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; }
     .modal-header h3 { color: var(--blue-primary); font-size: 1.15rem; font-weight: 800; }
     .close-btn { font-size: 1.3rem; cursor: pointer; color: var(--text-muted); background: none; border: none; }
 
-    .form-group { margin-bottom: 1rem; }
+    .form-group { margin-bottom: 1rem; position: relative; }
     .form-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.35rem; }
-    .form-control { width: 100%; padding: 0.55rem 0.75rem; border: 1.5px solid #CBD5E1; border-radius: 6px; font-size: 0.9rem; outline: none; }
+    .form-control { width: 100%; padding: 0.55rem 0.75rem; border: 1.5px solid #CBD5E1; border-radius: 6px; font-size: 0.88rem; outline: none; }
     .form-control:focus { border-color: var(--blue-primary); }
     textarea.form-control { resize: vertical; min-height: 75px; }
+
+    /* Lista inteligente autocompletable */
+    .dropdown-smart-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 180px;
+      overflow-y: auto;
+      background: #FFFFFF;
+      border: 1.5px solid #094780;
+      border-radius: 6px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      z-index: 10005;
+      display: none;
+    }
+    .dropdown-smart-item {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.84rem;
+      color: #1E293B;
+      cursor: pointer;
+      border-bottom: 1px solid #F1F5F9;
+      line-height: 1.3;
+      transition: background 0.15s;
+    }
+    .dropdown-smart-item:hover {
+      background: #F0F7FF;
+      color: #094780;
+      font-weight: 600;
+    }
 
     .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
 
@@ -250,13 +280,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 24%;">ACTIVIDADES</th>
-                    <th style="width: 9%;">ENCARGADO</th>
-                    <th style="width: 13%;">FECHA PLAZO</th>
-                    <th style="width: 13%;">ESTADO</th>
-                    <th style="width: 9%;">RESPONSABLE</th>
-                    <th style="width: 24%;">COMENTARIO</th>
-                    <th style="width: 8%;">ACCIONES</th>
+                    <th style="width: 20%;">PROYECTO</th>
+                    <th style="width: 20%;">ACTIVIDADES</th>
+                    <th style="width: 8%;">ENCARGADO</th>
+                    <th style="width: 12%;">FECHA PLAZO</th>
+                    <th style="width: 12%;">ESTADO</th>
+                    <th style="width: 8%;">RESP.</th>
+                    <th style="width: 14%;">COMENTARIO</th>
+                    <th style="width: 6%;">ACCIONES</th>
                   </tr>
                 </thead>
                 <tbody id="tableFinalizadas"></tbody>
@@ -279,13 +310,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 24%;">ACTIVIDADES</th>
-                    <th style="width: 9%;">ENCARGADO</th>
-                    <th style="width: 13%;">FECHA PLAZO</th>
-                    <th style="width: 13%;">ESTADO</th>
-                    <th style="width: 9%;">RESPONSABLE</th>
-                    <th style="width: 24%;">COMENTARIO</th>
-                    <th style="width: 8%;">ACCIONES</th>
+                    <th style="width: 20%;">PROYECTO</th>
+                    <th style="width: 20%;">ACTIVIDADES</th>
+                    <th style="width: 8%;">ENCARGADO</th>
+                    <th style="width: 12%;">FECHA PLAZO</th>
+                    <th style="width: 12%;">ESTADO</th>
+                    <th style="width: 8%;">RESP.</th>
+                    <th style="width: 14%;">COMENTARIO</th>
+                    <th style="width: 6%;">ACCIONES</th>
                   </tr>
                 </thead>
                 <tbody id="tableTramite"></tbody>
@@ -308,13 +340,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th style="width: 24%;">ACTIVIDADES</th>
-                    <th style="width: 9%;">ENCARGADO</th>
-                    <th style="width: 13%;">FECHA PLAZO</th>
-                    <th style="width: 13%;">ESTADO</th>
-                    <th style="width: 9%;">RESPONSABLE</th>
-                    <th style="width: 24%;">COMENTARIO</th>
-                    <th style="width: 8%;">ACCIONES</th>
+                    <th style="width: 20%;">PROYECTO</th>
+                    <th style="width: 20%;">ACTIVIDADES</th>
+                    <th style="width: 8%;">ENCARGADO</th>
+                    <th style="width: 12%;">FECHA PLAZO</th>
+                    <th style="width: 12%;">ESTADO</th>
+                    <th style="width: 8%;">RESP.</th>
+                    <th style="width: 14%;">COMENTARIO</th>
+                    <th style="width: 6%;">ACCIONES</th>
                   </tr>
                 </thead>
                 <tbody id="tableVencidas"></tbody>
@@ -335,10 +368,22 @@
       </div>
       <form id="taskForm" onsubmit="handleFormSubmit(event)">
         <input type="hidden" id="formTaskId">
+        
+        <!-- Lista Inteligente de Proyectos -->
         <div class="form-group">
-          <label>Actividad / Proyecto *</label>
+          <label>Proyecto Asignado *</label>
+          <input type="text" id="formProyectoInput" class="form-control" autocomplete="off" 
+                 placeholder="Escribe para filtrar o selecciona de la lista..." 
+                 oninput="onSearchProjectInput(this.value)" 
+                 onclick="this.select(); openProjectDropdown();" required>
+          <div id="projectDropdownList" class="dropdown-smart-list"></div>
+        </div>
+
+        <div class="form-group">
+          <label>Actividad / Tarea *</label>
           <input type="text" id="formActividad" class="form-control" required placeholder="Ej: Definición y saneamiento predial...">
         </div>
+        
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
             <label>Encargado</label>
@@ -378,6 +423,7 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzb6Z3664Hc_mM10b8Jr_kbOrKRjLyCNyMEXzS3ekaRwDYMFxlk9VEnJTIIzYzAumYQgA/exec";
     let RAW_DATA = [];
+    let CATALOGO_PROYECTOS = [];
 
     let selectedJefatura = null;
     let selectedAdmin = null;
@@ -398,7 +444,10 @@
         const res = await fetch(API_URL);
         const data = await res.json();
         
-        RAW_DATA = data.map(d => {
+        const rawActs = Array.isArray(data) ? data : (data.actividades || []);
+        CATALOGO_PROYECTOS = data.catalogo_proyectos || [];
+
+        RAW_DATA = rawActs.map(d => {
           let st = (d["ESTADO"] || "PENDIENTE").toUpperCase().trim();
           if (st.includes("FINALIZ") || st.includes("CONCLU")) st = "FINALIZADO";
           else if (st.includes("TRAMITE") || st.includes("PROCESO")) st = "EN TRAMITE";
@@ -408,6 +457,7 @@
             id: d["ID"] || ("ACT-" + Math.random().toString(36).substr(2, 9)),
             jefatura: (d["JEFATURAS"] || "").trim(),
             administrador: (d["ADMINISTRADORES"] || "").trim(),
+            proyecto: (d["PROYECTO"] || "").trim(),
             actividad: (d["ACTIVIDADES"] || "").trim(),
             encargado: (d["ENCARGADO"] || "").trim(),
             fecha_plazo: (d["FECHA DE PLAZO"] || "").trim(),
@@ -581,13 +631,14 @@
       tbody.innerHTML = "";
 
       if (dataList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:#64748B;">No hay actividades en esta categoría.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:2rem; color:#64748B;">No hay actividades en esta categoría.</td></tr>`;
         return;
       }
 
       dataList.forEach(r => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
+          <td><span style="font-size:0.8rem; color:var(--blue-primary); font-weight:700;">${r.proyecto || "-"}</span></td>
           <td><strong>${r.actividad}</strong></td>
           <td>${r.encargado || "-"}</td>
           <td>
@@ -634,9 +685,65 @@
       }
     }
 
+    /* LÓGICA DE LISTA INTELIGENTE DE PROYECTOS */
+    function getAdminProjects() {
+      if (!selectedAdmin) return [];
+      return CATALOGO_PROYECTOS
+        .filter(p => p.administrador.trim().toUpperCase() === selectedAdmin.trim().toUpperCase())
+        .map(p => p.proyecto.trim());
+    }
+
+    function renderProjectSuggestions(query = "") {
+      const dropdown = document.getElementById("projectDropdownList");
+      const list = getAdminProjects();
+      const q = query.toLowerCase().trim();
+      const filtered = q ? list.filter(item => item.toLowerCase().includes(q)) : list;
+
+      dropdown.innerHTML = "";
+      if (filtered.length === 0) {
+        dropdown.innerHTML = '<div style="padding:0.6rem; font-size:0.8rem; color:#94A3B8; text-align:center;">No se encontraron proyectos coincidentes</div>';
+        dropdown.style.display = "block";
+        return;
+      }
+
+      filtered.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "dropdown-smart-item";
+        div.textContent = item;
+        div.onclick = () => selectSmartProject(item);
+        dropdown.appendChild(div);
+      });
+
+      dropdown.style.display = "block";
+    }
+
+    function onSearchProjectInput(val) {
+      renderProjectSuggestions(val);
+    }
+
+    function openProjectDropdown() {
+      renderProjectSuggestions(document.getElementById("formProyectoInput").value);
+    }
+
+    function selectSmartProject(val) {
+      document.getElementById("formProyectoInput").value = val;
+      document.getElementById("projectDropdownList").style.display = "none";
+    }
+
+    // Cerrar sugerencias al hacer clic fuera del input
+    document.addEventListener("click", (e) => {
+      const input = document.getElementById("formProyectoInput");
+      const dropdown = document.getElementById("projectDropdownList");
+      if (input && dropdown && !input.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = "none";
+      }
+    });
+
     function openCreateModal() {
       document.getElementById("modalTitle").innerText = "Nueva Actividad - " + selectedAdmin;
       document.getElementById("formTaskId").value = "";
+      document.getElementById("formProyectoInput").value = "";
+      document.getElementById("projectDropdownList").style.display = "none";
       document.getElementById("formActividad").value = "";
       document.getElementById("formEncargado").value = "";
       document.getElementById("formResponsable").value = "";
@@ -652,6 +759,8 @@
 
       document.getElementById("modalTitle").innerText = "Editar Actividad";
       document.getElementById("formTaskId").value = item.id;
+      document.getElementById("formProyectoInput").value = item.proyecto || "";
+      document.getElementById("projectDropdownList").style.display = "none";
       document.getElementById("formActividad").value = item.actividad;
       document.getElementById("formEncargado").value = item.encargado;
       document.getElementById("formResponsable").value = item.responsable;
@@ -663,12 +772,14 @@
 
     function closeModal() {
       document.getElementById("taskModal").style.display = "none";
+      document.getElementById("projectDropdownList").style.display = "none";
     }
 
     async function handleFormSubmit(e) {
       e.preventDefault();
       const id = document.getElementById("formTaskId").value;
       const payload = {
+        proyecto: document.getElementById("formProyectoInput").value.trim(),
         actividad: document.getElementById("formActividad").value,
         encargado: document.getElementById("formEncargado").value,
         responsable: document.getElementById("formResponsable").value,
